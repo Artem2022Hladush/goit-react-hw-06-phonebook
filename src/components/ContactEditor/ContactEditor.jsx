@@ -1,8 +1,13 @@
 import  {useState} from "react";
-import PropTypes from "prop-types"
+import { useDispatch, useSelector } from "react-redux";
+import { addContact } from "redux/contactSlice";
+import { getContact } from "redux/selectors";
 import css from "../ContactEditor/ContactEditor.module.css"
+import Notiflix from 'notiflix';
 
-export function ContactEditor({onSubmit}) {
+const ContactEditor=() => {
+const dispatch = useDispatch();
+const contact = useSelector(getContact);
 
 const [name, setName] = useState("");
 const [number, setNumber] = useState("");
@@ -22,16 +27,28 @@ const handleChange = e => {
 					return;
 	}
 }
+const reset = () => {
+	setName('');
+	setNumber('');
+ };
 
 const handleSubmit = e => {
 	e.preventDefault();
+	const form = e.target;
 
-	onSubmit({name, number})
-setName('');
-setNumber('');
+	const isAdded = contact.some(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+    if (isAdded) {
+      Notiflix.Notify.warning(`${name} is already in contacts`);
+      return 1;
+    }
 
+	const object = {name: form.elements.name.value , number: form.elements.number.value};
+	dispatch(addContact(object))
+	form.reset()
+	reset();
 }
-
 
 	return (
 		<form className={css.form} onSubmit={handleSubmit}>
@@ -68,6 +85,4 @@ setNumber('');
 	)
 };
 
-ContactEditor.propTypes ={
-	onSubmit: PropTypes.func.isRequired,
-}
+export default ContactEditor;
