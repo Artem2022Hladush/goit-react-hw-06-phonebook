@@ -18,7 +18,7 @@ const onDeleteContact  = () => {dispatch(deleteContact(contact.id))}
 };
 
 Contact.propTypes={
-	item:PropTypes.shape({
+	contact:PropTypes.shape({
 		 name:PropTypes.string,
 		 number:PropTypes.string,
 		 id:PropTypes.string
